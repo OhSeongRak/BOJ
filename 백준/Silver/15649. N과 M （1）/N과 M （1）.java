@@ -1,45 +1,54 @@
-import java.util.Scanner;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.io.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
+// 문제 풀이 용도
 public class Main {
-	public static int N, R;
-	public static int[] input; // 순열에 사용할 숫자
-	public static int[] numbers; // input에서 선택된 값
-	public static boolean[] isSelected; // 선택된 숫자의 사용 여부 (인덱스를 담음)
-	public static int totalCount = 0; // 순열 경우의 수
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static StringBuilder sb = new StringBuilder();
 
-	public static void main(String[] args) {
-		Scanner sc = new Scanner(System.in);
-		N = sc.nextInt();
-		R = sc.nextInt();
-		input = new int[N];
-		numbers = new int[R];
-		isSelected = new boolean[N]; // 인덱스 사용 여부
+    static int[] arr;
+    static int[] tmp;
+    static boolean[] v;
 
-		for (int i = 0; i < N; i++) {
-			input[i] = i + 1;
-		}
+    public static void main(String[] args) throws IOException {
+        StringTokenizer st = new StringTokenizer(br.readLine());
 
-		perm(0);
-	} // end of main
+        int numberLimit = Integer.parseInt(st.nextToken());
+        int jari = Integer.parseInt(st.nextToken());
+        v = new boolean[numberLimit];
+        arr = new int[numberLimit];
+        for(int i = 0; i<numberLimit; i++)
+            arr[i] = i+1;
 
-	// numbers 배열 칸에 cnt칸에 가능한 숫자를 넣어 보기
-	public static void perm(int cnt) {
-		if (cnt == R) {
-			for(int k : numbers)
-				System.out.print(k + " ");
-			System.out.println();
-			totalCount++;
-			return;
-		}
+        tmp = new int[jari];
 
-		for (int i = 0; i < N; i++) { // cnt 칸에 넣을 수 있는 숫자를 하나씩 넣어보자
-			if (isSelected[i]) // numbers[] // 0 ~ cnt-1에 사용하지 않은 숫자를 찾아서 쓰기
-				continue;
-			numbers[cnt] = input[i];
-			isSelected[i] = true;
-			perm(cnt + 1);
-			isSelected[i] = false;
-		}
+        su(jari, 0);
+        System.out.println(sb);
+    }
 
-	} // end of method
-} // end of class
+    public static void su(int limit, int idx){
+        if (limit == idx){
+            for(int n : tmp){
+                sb.append(n).append(" ");
+            }
+            sb.append("\n");
+            return;
+        }
+
+
+        for(int i = 0; i<arr.length; i++){
+            if(!v[i]) {
+                v[i] = true;
+                tmp[idx] = arr[i];
+                su(limit, idx + 1);
+                v[i] = false;
+            }
+        }
+    }
+}
