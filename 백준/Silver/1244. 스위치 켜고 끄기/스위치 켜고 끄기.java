@@ -1,58 +1,67 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.StringTokenizer;
 
+import java.util.*;
+import java.io.*;
 
 public class Main {
-	static int[] swichArr = new int[101];
-	static int[] flag = { 1, 0 };
-
-	static void man(int sNum, int N) {
-		int k = sNum;
-		while (k <= N) {
-			swichArr[k] = flag[swichArr[k]];
-			k += sNum;
-		}
-	}
-
-	static void woman(int sNum, int N) {
-		swichArr[sNum] = flag[swichArr[sNum]];
-		int k = 1;
-		while (true) {
-			if (sNum - k < 1 || sNum + k > N || (swichArr[sNum + k] != swichArr[sNum - k]))
-				break;
-			swichArr[sNum + k] = flag[swichArr[sNum + k]];
-			swichArr[sNum - k] = flag[swichArr[sNum - k]];
-			k++;
-		}
-	}
-
-	public static void main(String[] args) throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in)); // br.readLine();
+	static List<Integer> list;
+	
+	public static void main(String[] args) throws Exception{
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		br.readLine();
 		StringTokenizer st = new StringTokenizer(br.readLine());
-		int N = Integer.parseInt(st.nextToken());
-		st = new StringTokenizer(br.readLine(), " ");
-		for (int i = 1; i <= N; i++) {
-			swichArr[i] = Integer.parseInt(st.nextToken());
+		list = new ArrayList<>();
+		list.add(99999);
+		while(st.hasMoreTokens())
+			list.add(Integer.parseInt(st.nextToken()));
+		
+		int studentNumber = Integer.parseInt(br.readLine());
+		
+		// 남학생은 스위치 번호 배수를 바꾼다.
+		// 여학생은 번호를 중심으로 양옆이 같으면 바꾼다.
+		int gender = 0;
+		int number = 0;
+		
+		while(studentNumber-->0) {
+			st = new StringTokenizer(br.readLine());
+			gender = Integer.parseInt(st.nextToken());
+			number = Integer.parseInt(st.nextToken());
+			
+			if(gender == 1) 
+				m(number);
+			else 
+				w(number);
 		}
-
-		int studentNum = Integer.parseInt(new StringTokenizer(br.readLine()).nextToken());
-		for (int i = 0; i < studentNum; i++) {
-			st = new StringTokenizer(br.readLine(), " ");
-			int person = Integer.parseInt(st.nextToken());
-			int sNum = Integer.parseInt(st.nextToken());
-			if (person == 1)
-				man(sNum, N);
-			else
-				woman(sNum, N);
-		}
-
-		for (int i = 1; i <= N; i++) {
-			System.out.print(swichArr[i] + " ");
-			if (i % 20 == 0)
+		
+		for(int i = 1; i<list.size(); i++) {
+			System.out.print(list.get(i) + " ");
+			if(i % 20 == 0)
 				System.out.println();
 		}
-
-	} // end of main
+			
+	}
+	
+	public static void m(int number) {
+		for(int i = number; i<list.size(); i+= number) 
+			list.set(i, list.get(i) == 1 ? 0 : 1);
+	}
+	public static void w(int number) {
+		int s = number - 1;
+		int e = number + 1;
+		
+		while(s >= 1 && e < list.size()) {
+			if(list.get(s) == list.get(e)) {
+				s--;
+				e++;
+			}else 
+				break;
+		}
+		
+		s++;
+		e--;
+		
+		for(int i = s; i<=e; i++) {
+			list.set(i, list.get(i) == 1 ? 0 : 1);
+		}
+		
+	}
 }
