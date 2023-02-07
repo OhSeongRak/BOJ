@@ -7,14 +7,15 @@ import java.util.StringTokenizer;
 
 public class Main {
 	static Set<String> numSet = new HashSet<>(); // 초기값 : 111~999
-	
+
 	// 중복 체크 함수
-	static boolean duplicate(String s) {
+	static boolean canNumber(String s) {
 		if (s.charAt(0) == s.charAt(1) || s.charAt(0) == s.charAt(2) || s.charAt(1) == s.charAt(2))
-			return true;
-        if (s.contains("0"))
-			return true;
-		return false;
+			return false;
+		if (s.contains("0"))
+			return false;
+
+		return true;
 	}
 
 	// 1. 가능한 숫자를 찾아서 tmpSet에 추가
@@ -22,9 +23,9 @@ public class Main {
 	static void findPossibleNumber(String numStr, int strike, int ball) {
 		Set<String> tmpSet = new HashSet<>();
 
-		for (int i = 111; i < 1000; i++) { // 111 ~ 999까지 numStr과 비교
+		for (int i = 111; i < 1000; i++) {
 			String tmp = String.valueOf(i);
-			if (!numSet.contains(tmp))
+			if (!numSet.contains(tmp)) // numSet에 있는 숫자 => 가능한 경우의 수
 				continue;
 			int sCount = 0; // tmp와 numStr 간의 strike 개수
 			int bCount = 0; // tmp와 numStr 간의 ball 개수
@@ -39,7 +40,7 @@ public class Main {
 				tmpSet.add(tmp);
 		}
 
-		numSet.retainAll(tmpSet);
+		numSet = tmpSet; // numSet과 tmpSet의 교집합만 numSet에 남김
 	}
 
 	public static void main(String[] args) throws IOException {
@@ -48,20 +49,23 @@ public class Main {
 		int N = Integer.parseInt(st.nextToken());
 
 		for (int i = 111; i < 1000; i++) {
-			String tmp = String.valueOf(i); 
-					if (duplicate(tmp))
-						continue;
-			numSet.add(tmp); // 111~999를 numSet에 넣어줌
+			String tmp = String.valueOf(i);
+			if (!canNumber(tmp)) // 숫자야구로 사용할 수 있는 숫자인지 판별
+				continue;
+			numSet.add(tmp); // 사용 가능한 숫자면 numSet에 넣어줌
 		}
 
+//		for (String s: numSet)
+//			System.out.println(s);
+//
 		for (int i = 0; i < N; i++) {
 			st = new StringTokenizer(br.readLine(), " ");
 			String numStr = st.nextToken();
 			int strike = Integer.parseInt(st.nextToken());
 			int ball = Integer.parseInt(st.nextToken());
-			findPossibleNumber(numStr, strike, ball);
+			findPossibleNumber(numStr, strike, ball); // 주어진 입력값을 통해 가능한 경우의 모든 숫자를 numSet에 남김
 		}
-
+//
 		System.out.println(numSet.size());
 
 	} // end of main
