@@ -1,67 +1,58 @@
 
-import java.util.*;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 
 public class Main {
-	static List<Integer> list;
-	
-	public static void main(String[] args) throws Exception{
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		br.readLine();
-		StringTokenizer st = new StringTokenizer(br.readLine());
-		list = new ArrayList<>();
-		list.add(99999);
-		while(st.hasMoreTokens())
-			list.add(Integer.parseInt(st.nextToken()));
-		
-		int studentNumber = Integer.parseInt(br.readLine());
-		
-		// 남학생은 스위치 번호 배수를 바꾼다.
-		// 여학생은 번호를 중심으로 양옆이 같으면 바꾼다.
-		int gender = 0;
-		int number = 0;
-		
-		while(studentNumber-->0) {
-			st = new StringTokenizer(br.readLine());
-			gender = Integer.parseInt(st.nextToken());
-			number = Integer.parseInt(st.nextToken());
-			
-			if(gender == 1) 
-				m(number);
-			else 
-				w(number);
+	static int[] switchs = new int[101];
+	static int[] flag = { 1, 0 };
+
+	static void man(int pos, int N) {
+		int k = pos; // k : 시작 위치
+		while (k <= N) {
+			switchs[k] = flag[switchs[k]];
+			k += pos; // pos만큼 증가
 		}
-		
-		for(int i = 1; i<list.size(); i++) {
-			System.out.print(list.get(i) + " ");
-			if(i % 20 == 0)
+	}
+
+	static void woman(int pos, int N) {
+		switchs[pos] = flag[switchs[pos]];
+		int k = 1;
+		while (true) {
+			// pos가 범위를 벗어났거나, 대칭이 아니라면 break
+			if (pos - k < 1 || pos + k > N || (switchs[pos + k] != switchs[pos - k]))
+				break;
+			switchs[pos + k] = flag[switchs[pos + k]];
+			switchs[pos - k] = flag[switchs[pos - k]];
+			k++;
+		}
+	}
+
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in)); // br.readLine();
+		int N = Integer.parseInt(br.readLine());
+		StringTokenizer st = new StringTokenizer(br.readLine(), " ");
+		for (int i = 1; i <= N; i++) {
+			switchs[i] = Integer.parseInt(st.nextToken());
+		}
+
+		int studentNum = Integer.parseInt((br.readLine()));
+		for (int i = 0; i < studentNum; i++) {
+			st = new StringTokenizer(br.readLine(), " ");
+			int person = Integer.parseInt(st.nextToken());
+			int pos = Integer.parseInt(st.nextToken());
+			if (person == 1)
+				man(pos, N);
+			else
+				woman(pos, N);
+		}
+
+		for (int i = 1; i <= N; i++) {
+			System.out.print(switchs[i] + " ");
+			if (i % 20 == 0)
 				System.out.println();
 		}
-			
-	}
-	
-	public static void m(int number) {
-		for(int i = number; i<list.size(); i+= number) 
-			list.set(i, list.get(i) == 1 ? 0 : 1);
-	}
-	public static void w(int number) {
-		int s = number - 1;
-		int e = number + 1;
-		
-		while(s >= 1 && e < list.size()) {
-			if(list.get(s) == list.get(e)) {
-				s--;
-				e++;
-			}else 
-				break;
-		}
-		
-		s++;
-		e--;
-		
-		for(int i = s; i<=e; i++) {
-			list.set(i, list.get(i) == 1 ? 0 : 1);
-		}
-		
-	}
+
+	} // end of main
 }
