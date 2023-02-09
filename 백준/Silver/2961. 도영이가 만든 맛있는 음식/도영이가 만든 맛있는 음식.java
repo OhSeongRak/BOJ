@@ -1,69 +1,41 @@
-import java.util.*;
-import java.io.*;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 
 public class Main {
-	
-	static SSSS[] sss;
-	static SSSS[] temp;
-	static int min = Integer.MAX_VALUE;
-	
-	public static void main(String[] args) throws Exception{
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		
-		int count = Integer.parseInt(br.readLine());
-		int loop = count;
-		sss = new SSSS[count];
-		
-		int idx = 0;
-		while(count --> 0) {
-			StringTokenizer st = new StringTokenizer(br.readLine());
-			
-			int s = Integer.parseInt(st.nextToken());
-			int ss= Integer.parseInt(st.nextToken());
-			
-			sss[idx++] = new SSSS(s, ss);
-		}
-		
-		
-		for(int i = 1; i<= loop; i++) {
-			temp = new SSSS[i];
-			comb(i, 0, 0);
-		}
-		
-		System.out.println(min);
-		
-	}
-	
-	public static void comb(int limit, int n, int idx) {
-		if(limit == n) {
-			int sMul = 1;
-			int ssSum = 0;
-			
-			for(SSSS s : temp) {
-				sMul *= s.sin;
-				ssSum += s.ssn;
-			}
-			min = Math.min(min, Math.abs(sMul - ssSum));
-			return;
-		}
-		
-		for(int i = idx; i<sss.length; i++) {
-			temp[n] = sss[i];
-			comb(limit, n + 1, i + 1);
-		}
-	}
-}
+	static int minDiff = Integer.MAX_VALUE;
+	static int N;
+	static int[] bitter;
+	static int[] sour;
 
-class SSSS{
-	int sin, ssn;
-	public SSSS(int s, int ss) {
-		this.sin = s;
-		this.ssn =ss;
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st;
+		N = Integer.parseInt(br.readLine());
+		bitter = new int[N];
+		sour = new int[N];
+
+		for (int i = 0; i < N; i++) {
+			st = new StringTokenizer(br.readLine());
+			bitter[i] = Integer.parseInt(st.nextToken());
+			sour[i] = Integer.parseInt(st.nextToken());
+		}
+
+		generateSubset(0, 1, 0, false);
+		System.out.println(minDiff);
 	}
-	
-	@Override
-	public String toString() {
-		return this.sin + " " +this.ssn;
+
+	private static void generateSubset(int cnt, int bitterMulti, int sourSum, boolean flag) {
+		if (flag && minDiff > Math.abs(bitterMulti - sourSum)) {
+			minDiff = Math.abs(bitterMulti - sourSum);
+		}
+		if (cnt == N)
+			return;
+
+		generateSubset(cnt + 1, bitterMulti * bitter[cnt], sourSum + sour[cnt], true);
+		generateSubset(cnt + 1, bitterMulti, sourSum, flag || false);
+
 	}
 }
