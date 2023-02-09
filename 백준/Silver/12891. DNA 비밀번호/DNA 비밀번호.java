@@ -1,75 +1,76 @@
-import java.io.*;
-import java.util.*;
-import java.util.function.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 public class Main {
-    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-    static StringBuilder sb = new StringBuilder();
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in)); // br.readLine();
+		StringTokenizer st;
+		Map<Character, Integer> format = new HashMap<Character, Integer>();
+		format.put('A', 0);
+		format.put('C', 1);
+		format.put('G', 2);
+		format.put('T', 3);
 
-    static int[] arr;
+		int[] arr = new int[4];
+//		String format = "ACGT";
 
-    public static void main(String[] args) throws IOException {
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        //int numberCount = Integer.parseInt(st.nextToken());
+		st = new StringTokenizer(br.readLine());
+		int S = Integer.parseInt(st.nextToken());
+		int P = Integer.parseInt(st.nextToken());
+		String DNA = br.readLine();
 
-        int strLen = Integer.parseInt(st.nextToken());
-        int slidingSize = Integer.parseInt(st.nextToken());
+		st = new StringTokenizer(br.readLine());
+		int[] acgt = new int[4];
+		for (int i = 0; i < 4; i++) {
+			acgt[i] = Integer.parseInt(st.nextToken());
+		}
 
-        String[] dna = {"A","C","G","T"};
-        String str = br.readLine();
+		// 초기화
+		for (int i = 0; i < P; i++) {
+			char ch = DNA.charAt(i);
+			if (format.containsKey(ch))
+				arr[format.get(ch)]++;
+		}
 
-        st= new StringTokenizer(br.readLine());
-        int[] strCount = new int[4];
-        for(int i = 0; i<strCount.length; i++){
-            strCount[i] = Integer.parseInt(st.nextToken());
+		int total = 0;
 
-        }
+		for (int j = 0; j < 5; j++) {
+			if (j == 4) {
+				total++;
+				break;
+			}
+			if (arr[j] < acgt[j])
+				break;
+		}
 
-        // 총 문자열에서 0부터 slidingSize 만큼 반복한다.
-        // 시작위치 + slidingSize > 총문자열의 마지막길이 보다 커지면 종료.
-        int[] check = new int[4];
-        int rcount = 0;
-        int start = 0;
-        int s = 0;
-        int e = slidingSize - 1;
-        //미리 넣어두기
-        for(int i = 0; i<slidingSize; i++){
-            for(int j = 0; j<4; j++)
-                if((str.charAt(i) +"").equals(dna[j])){
-                    check[j]++;
-                }
-        }
+		loop: for (int i = 1; i < S - P + 1; i++) {
 
+			char prev = DNA.charAt(i - 1);
+			char next = DNA.charAt(i + P - 1);
 
-        // 
-        while(start + slidingSize <= str.length()){ // 슬라이딩
-            //숫자가 이상인지 검증
-            int counts = 0;
-            for(int i = 0; i< check.length; i++){
-                if(check[i] >= strCount[i])
-                    counts++;
-            }
-            if(counts == 4)
-                rcount++;
-            s++;
-            e++;
-            start++;
-            if(e == str.length()){
-                break;
-            }
-            // check 배열에서 s-1 인거 버리고, 현재 e인거 추가
-            for(int i =0; i<4; i++){
-                if((str.charAt(s-1)+"").equals(dna[i])){
-                    check[i]--;
-                }
-                if((str.charAt(e)+"").equals(dna[i])){
-                    check[i]++;
-                }
-            }
-        }
-        System.out.println(rcount);
-    }
+			if (format.containsKey(prev)) {
+				arr[format.get(prev)]--;
+			}
+
+			if (format.containsKey(next)) {
+				arr[format.get(next)]++;
+			}
+
+			for (int j = 0; j < 4; j++) {
+				if (arr[j] < acgt[j])
+					continue loop;
+			}
+
+			total++;
+		}
+
+		System.out.println(total);
+
+	} // end of main
 }
-
 
