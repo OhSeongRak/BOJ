@@ -15,7 +15,7 @@ public class Main {
 		}
 		int garo = 0;
 		int sero = 0;
-		for (int i = 0; i < 6; i++) {
+		for (int i = 0; i < 6; i++) { // 큰 사각형의 가로, 세로 구하기
 			int dir = info.get(i)[0];
 			int dis = info.get(i)[1];
 			if (dir == 1 || dir == 2)
@@ -24,8 +24,9 @@ public class Main {
 				sero = Math.max(dis, sero);
 		}
 
-		info.addAll(info);
+		info.addAll(info); // 지그재그되는 부분을 찾기 위해
 		int subSize = 0;
+        // 3131 or 1414 or 4242 or 2323
 		for (int i = 0; i < info.size() - 4; i++) {
 			if (info.get(i)[0] == info.get(i + 2)[0] && info.get(i + 1)[0] == info.get(i + 3)[0]) {
 				subSize = info.get(i + 1)[1] * info.get(i + 2)[1];
