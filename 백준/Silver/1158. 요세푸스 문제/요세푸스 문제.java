@@ -1,82 +1,59 @@
-import java.util.Scanner;
 
-class ListNode {
-	int val;
-	ListNode next;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 
-	ListNode() {
-	}
+public class Main {
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in)); // br.readLine();
+		StringTokenizer st;
+		st = new StringTokenizer(br.readLine()); // Integer.parseInt(st.nextToken());
+		int N = Integer.parseInt(st.nextToken());
+		int K = Integer.parseInt(st.nextToken());
 
-	ListNode(int val) {
-		this.val = val;
-		this.next = null;
-	}
+		CircularLinkedList cll = new CircularLinkedList();
+		for (int i = 0; i < N; i++) {
+			cll.add(i + 1);
+		}
+		cll.tail.next = cll.head;
 
-	ListNode(int val, ListNode next) {
-		this.val = val;
+		Node pointer = cll.tail;
+		System.out.print('<');
+		for (int i = 0; i < N - 1; i++) {
+			for (int j = 0; j < K - 1; j++) {
+				pointer = pointer.next;
+			}
+			System.out.print(pointer.next.data + ", ");
+			pointer.next = pointer.next.next;
+
+		}
+		System.out.println(pointer.data + ">");
+	} // end of main
+}
+
+class Node {
+	int data;
+	Node next;
+
+	public Node(int data, Node next) {
+		this.data = data;
 		this.next = next;
 	}
 }
 
-class LinkedList {
-	ListNode head;
-	ListNode tail;
+class CircularLinkedList {
+	public Node head = null;
+	public Node tail = null;
 
-	public LinkedList() {
-		this.head = null;
-		this.tail = null;
-	}
-
-	public void inserNode(int data) {
-		ListNode newNode = new ListNode(data);
+	public void add(int data) {
+		Node newNode = new Node(data, null);
 		if (head == null) {
 			this.head = newNode;
 			this.tail = newNode;
-		} else {
-			this.tail.next = newNode;
-			this.tail = this.tail.next;
+			return;
 		}
+		this.tail.next = newNode;
+		this.tail = newNode;
 	}
-
-	public void tailToHead() {
-		tail.next = head;
-	}
-}
-
-public class Main {
-
-	public static ListNode solution(ListNode head, int N, int K) {
-
-		ListNode tmp = head;
-
-		System.out.print("<");
-		for (int i = 0; i < N - 1; i++) {
-			for (int j = 0; j < K - 1; j++)
-				tmp = tmp.next;
-			System.out.print(tmp.next.val + ", ");
-			tmp.next = tmp.next.next;
-		}
-		System.out.println(tmp.val + ">");
-		return head;
-	}
-
-	public static void main(String[] args) {
-		int N, K;
-
-		LinkedList list = new LinkedList();
-
-		Scanner sc = new Scanner(System.in);
-
-		N = sc.nextInt();
-		K = sc.nextInt();
-
-		for (int i = 1; i <= N; i++)
-			list.inserNode(i);
-		list.tailToHead();
-
-		solution(list.tail, N, K);
-
-
-	}
-
 }
