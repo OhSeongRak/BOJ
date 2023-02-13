@@ -1,44 +1,45 @@
-import java.util.*;
-import java.io.*;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Stack;
+import java.util.StringTokenizer;
 
 public class Main {
-
-	public static void main(String[] args) throws Exception {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in)); // br.readLine();
+		StringTokenizer st;
 		StringBuilder sb = new StringBuilder();
-		int size = Integer.parseInt(br.readLine());
-		int[] arr = new int[size];
 
-		StringTokenizer st = new StringTokenizer(br.readLine());
-		for (int i = 0; i < size; i++)
-			arr[i] = Integer.parseInt(st.nextToken());
-		Stack<Height> s = new Stack<>();
+		int N = Integer.parseInt(br.readLine());
 
-		for (int i = 0; i < size; i++) {
-			while (!s.isEmpty()) {
-				if (s.peek().value < arr[i]) {
-					s.pop();
-				} else {
-					sb.append(s.peek().idx).append(" ");
-					s.push(new Height(arr[i],i+1));
-					break;
-				}
-			}
-			if(s.isEmpty()) {
-				s.push(new Height(arr[i],i+1));
-				sb.append(0).append(" ");
-			}
-				
+		int[] tops = new int[N + 1];
+		int[] numbers = new int[N + 1];
+		st = new StringTokenizer(br.readLine()); // Integer.parseInt(st.nextToken());
+		for (int i = 1; i <= N; i++) {
+			tops[i] = Integer.parseInt(st.nextToken());
 		}
-		System.out.println(sb.toString());
-	}
-}
 
-class Height{
-	int value;
-	int idx;
-	public Height(int value, int idx) {
-		this.value = value;
-		this.idx = idx;
-	}
+		Stack<int[]> stack = new Stack<>();
+		for (int i = N; i >= 1; i--) {
+			if (stack.isEmpty()) {
+				stack.push(new int[] { i, tops[i] });
+				continue;
+			}
+			while (!stack.isEmpty() && stack.peek()[1] < tops[i]) {
+				numbers[stack.pop()[0]] = i;
+			}
+			stack.push(new int[] { i, tops[i] });
+		}
+
+		while (!stack.isEmpty()) {
+			numbers[stack.pop()[0]] = 0;
+		}
+
+		sb = new StringBuilder();
+		for (int i = 1; i <= N; i++) {
+			sb.append(numbers[i] + " ");
+		}
+		System.out.println(sb);
+	} // end of main
 }
