@@ -5,7 +5,6 @@ import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
 public class Solution {
-	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	static StringTokenizer st;
 	static int N;
 	static int M;
@@ -13,9 +12,10 @@ public class Solution {
 	static int answer;
 
 	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		int T = Integer.parseInt(br.readLine());
 		for (int test_case = 1; test_case <= T; test_case++) {
-			st = new StringTokenizer(br.readLine());
+			st = new StringTokenizer(br.readLine(), " ");
 			N = Integer.parseInt(st.nextToken());
 			M = Integer.parseInt(st.nextToken());
 			inputs = new int[N];
@@ -33,22 +33,9 @@ public class Solution {
 						answer = sum;
 				}
 			}
-			System.out.printf("#%d %d \n", test_case, answer);
+			System.out.println("#" + test_case + " " + answer);
 		}
 
 	} // end of main
 
-	public static void comb(int idx, int sum, int cnt) {
-		if (M < sum)
-			return;
-
-		if (cnt == 2) {
-			if (M - sum < M - answer)
-				answer = sum;
-		}
-
-		for (int i = idx; i < inputs.length; i++) {
-			comb(i + 1, sum + inputs[i], cnt + 1);
-		}
-	}
 } // end of class
