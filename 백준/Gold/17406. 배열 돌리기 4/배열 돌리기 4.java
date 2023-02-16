@@ -1,113 +1,174 @@
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.StringTokenizer;
+import java.util.*;
+import java.io.*;
 
 public class Main {
-	static int N, M, K, r, c, s, answer = Integer.MAX_VALUE;
-	static int[][] board;
-	static int[][] originBoard;
-	static int[][] rBoard;
-	static int[][] operate;
-	static int[] order;
-	static boolean[] isSelected;
+	static int[][] arr;
+	static int min = Integer.MAX_VALUE;
+	
+	// 순열
+	static NodeRowCol[] list;
+	static NodeRowCol[] temps;
+	static boolean[] v;
+	
 
-	public static void copy() {
-		for (int i = 1; i <= N; i++)
-			for (int j = 1; j <= M; j++)
-				board[i][j] = originBoard[i][j];
+	public static void main(String[] args) throws Exception {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st = new StringTokenizer(br.readLine());
+
+		int row = Integer.parseInt(st.nextToken()) + 1;
+		int col = Integer.parseInt(st.nextToken()) + 1;
+		int line = Integer.parseInt(st.nextToken());
+
+		list = new NodeRowCol[line];
+		temps = new NodeRowCol[line];
+		v = new boolean[line];
+		arr = new int[row][col];
+
+		for (int i = 1; i < row; i++) {
+			st = new StringTokenizer(br.readLine());
+			for (int j = 1; j < col; j++) {
+				arr[i][j] = Integer.parseInt(st.nextToken());
+			}
+		}
+
+		int idx = 0;
+		while (line-- > 0) {
+			st = new StringTokenizer(br.readLine());
+			int row1 = Integer.parseInt(st.nextToken());
+			int col1 = Integer.parseInt(st.nextToken());
+			int gap = Integer.parseInt(st.nextToken());
+
+			int sRow = row1 - gap;
+			int sCol = col1 - gap;
+
+			NodeRowCol nrc = new NodeRowCol(sRow, sCol, gap * 2);
+			list[idx++] = nrc;
+
+		}
+		permu(list.length, 0);
+		System.out.println(min);
 	}
 
-	public static void permutation(int cnt) {
-		if (cnt == K) {
-			copy();
-			for (int o : order) {
-				rotate(operate[o][0], operate[o][1], operate[o][2]);
-			}
-			answer = Math.min(answer, min());
+	// 순열
+	public static void permu(int limit, int n) {
+		if (limit == n) {
+			// debug
+//			System.out.println();
+//			for (int[] arr1 : arr)
+//				System.out.println(Arrays.toString(arr1));
+
+			minSum();
 			return;
 		}
 
-		for (int i = 0; i < K; i++) { // cnt 칸에 넣을 수 있는 숫자를 하나씩 넣어보자
-			if (isSelected[i]) // numbers[] // 0 ~ cnt-1에 사용하지 않은 숫자를 찾아서 쓰기
-				continue;
-			order[cnt] = i;
-			isSelected[i] = true;
-			permutation(cnt + 1);
-			isSelected[i] = false;
+		
+		for (int i = 0; i < list.length; i++) {
+			if (!v[i]) {
+				temps[n] = list[i];
+				v[i] = true;
+				rotation(list[i].gap, list[i].x, list[i].y);
+				permu(limit, n + 1);
+				// 로테이션 뒤로 돌려주기.
+				backRotation(list[i].gap, list[i].x, list[i].y);
+				v[i] = false;
+			}
 		}
-	} // end of perm
+	}
 
-	public static int min() {
-		int ret = Integer.MAX_VALUE;
-		for (int i = 1; i <= N; i++) {
+	public static void rotation(int size, int xs, int ys) {
+		if (size <= 1)
+			return;
+
+		int[] xRange = { 0, 1, 0, -1 }; // 오른쪽부터 시작
+		int[] yRange = { 1, 0, -1, 0 };
+
+		Node n = new Node(xs, ys, 0);
+		int moveSize = size;
+		int nextTemp = 0;
+		int four = 4;
+		int temp = arr[xs][ys];
+
+		// 이전걸 기억하고,
+		// 다음걸 기억하고,
+		// 이전걸 다음 위치에 넣는다.
+		while (four > 0) {
+			n.x += xRange[n.dir];
+			n.y += yRange[n.dir];
+
+			nextTemp = arr[n.x][n.y];
+			arr[n.x][n.y] = temp;
+			temp = nextTemp;
+
+			moveSize--;
+
+			if (moveSize == 0) {
+				four--;
+				moveSize = size;
+				n.dir++;
+			}
+		}
+		rotation(size - 2, xs + 1, ys + 1);
+	}
+
+	public static void backRotation(int size, int xs, int ys) {
+		if (size <= 1)
+			return;
+
+		int[] xRange = { 0, -1, 0, 1 }; // 아래부터 시작
+		int[] yRange = { -1, 0, 1, 0 };
+
+		Node n = new Node(xs, ys, 3);
+		int moveSize = size;
+		int nextTemp = 0;
+		int four = 4;
+		int temp = arr[xs][ys];
+
+		while (four > 0) {
+			n.x += xRange[n.dir];
+			n.y += yRange[n.dir];
+
+			nextTemp = arr[n.x][n.y];
+			arr[n.x][n.y] = temp;
+			temp = nextTemp;
+
+			moveSize--;
+
+			if (moveSize == 0) {
+				four--;
+				moveSize = size;
+				n.dir--;
+			}
+		}
+		backRotation(size - 2, xs + 1, ys + 1);
+	}
+
+	// 행에있는 모든수의 합중 최소값
+	public static void minSum() {
+		for (int i = 1; i < arr.length; i++) {
 			int sum = 0;
-			for (int j = 0; j <= M; j++) {
-				sum += board[i][j];
-			}
-			ret = Math.min(ret, sum);
+			for (int j = 1; j < arr[i].length; j++)
+				sum += arr[i][j];
+			min = Math.min(sum, min);
 		}
-		return ret;
 	}
 
-	public static void rotate(int r, int c, int s) {
-		int x = r - s; // 시작점
-		int y = c - s;
-		int n = 2 * s + 1; // 사각형 크기
+	static class Node {
+		int x, y, dir;
 
-		for (int i = 0; i < s; i++) { // 껍질 개수만큼 반복
-			// 상
-			for (int j = i; j < n - i - 1; j++)
-				rBoard[i + x][j + 1 + y] = board[i + x][j + y];
-			// 우
-			for (int j = i; j < n - i - 1; j++)
-				rBoard[j + 1 + x][n - i - 1 + y] = board[j + x][n - i - 1 + y];
-			// 하
-			for (int j = n - i - 1; j > i; j--)
-				rBoard[n - i - 1 + x][j - 1 + y] = board[n - i - 1 + x][j + y];
-			// 좌
-			for (int j = n - i - 1; j > i; j--)
-				rBoard[j - 1 + x][i + y] = board[j + x][i + y];
-
-			rBoard[r][c] = board[r][c];
+		public Node(int x, int y, int dir) {
+			this.x = x;
+			this.y = y;
+			this.dir = dir;
 		}
-
-		for (int i = x; i <= r + s; i++)
-			for (int j = y; j <= c + s; j++)
-				board[i][j] = rBoard[i][j];
-
 	}
 
-	public static void main(String[] args) throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in)); // br.readLine();
-		StringTokenizer st = new StringTokenizer(br.readLine(), " ");
-		N = Integer.parseInt(st.nextToken());
-		M = Integer.parseInt(st.nextToken());
-		K = Integer.parseInt(st.nextToken());
-		board = new int[N + 1][M + 1];
-		originBoard = new int[N + 1][M + 1];
-		rBoard = new int[N + 1][M + 1];
-		operate = new int[K][3];
-		order = new int[K];
-		isSelected = new boolean[K];
+	static class NodeRowCol {
+		int x, y, gap;
 
-		for (int i = 1; i <= N; i++) {
-			st = new StringTokenizer(br.readLine(), " ");
-			for (int j = 1; j <= M; j++) {
-				originBoard[i][j] = Integer.parseInt(st.nextToken());
-			}
+		public NodeRowCol(int x, int y, int gap) {
+			this.gap = gap;
+			this.x = x;
+			this.y = y;
 		}
-
-		for (int i = 0; i < K; i++) {
-			st = new StringTokenizer(br.readLine(), " ");
-			operate[i][0] = Integer.parseInt(st.nextToken());
-			operate[i][1] = Integer.parseInt(st.nextToken());
-			operate[i][2] = Integer.parseInt(st.nextToken());
-		}
-
-		permutation(0);
-		System.out.println(answer);
-
-	} // end of main
+	}
 }
