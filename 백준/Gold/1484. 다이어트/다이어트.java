@@ -1,4 +1,3 @@
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -8,7 +7,7 @@ public class Main {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in)); // br.readLine();
 		StringBuilder sb = new StringBuilder();
 		int G = Integer.parseInt(br.readLine());
-		int n = (int) Math.ceil(Math.sqrt(G));
+		double n = Math.ceil(Math.sqrt(G));
 
 		// N^2 - G = beforeWeight^2
 		// beforeWeight는 최대 N-1
@@ -16,9 +15,9 @@ public class Main {
 		// (N + N - 1) * (1) = G (A+B)(A-B) = A^2 - B^2
 		// 2*N - 1 > G 라면 더 이상 N이 커져도 값이 나올 수 없음.
 		while (n + (n - 1) <= G) {
-			double beforeWeight = Math.sqrt((double) n * (double) n - G);
+			double beforeWeight = Math.sqrt(n * n - G);
 			if (beforeWeight != 0 && Math.ceil(beforeWeight) == beforeWeight)
-				sb.append(n).append("\n");
+				sb.append((int) n).append("\n");
 			n++;
 		}
 
