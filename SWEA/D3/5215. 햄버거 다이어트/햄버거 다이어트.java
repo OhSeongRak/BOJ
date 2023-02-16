@@ -35,7 +35,7 @@ class Solution
  
             // 조합인데, 칼로리를 넘으면 안되고, 그 중에서 최고의 맛.
             for(int j = 1; j<=size; j++){
-                bt(j, 0, 0, 0);
+                bt(j, 0, 0, 0,0);
             }
  
             System.out.println("#" + i + " " + max);
@@ -45,20 +45,20 @@ class Solution
         }
     }
  
-    public static void bt(int limit, int n, int idx, int calTest){
+    public static void bt(int limit, int n, int idx, int calTest, int maxSum){
         if(calTest > calLimit)
             return;
          
         if(limit == n){
             if(calLimit >= calTest ) {
-                max = Math.max(max, temp.stream().mapToInt(e -> e.tasty).sum());
+                max = Math.max(max,maxSum);
             }
             return;
         }
  
         for(int i = idx; i<cal.size(); i++){
             temp.set(n, cal.get(i));
-            bt(limit, n + 1, i + 1, calTest + cal.get(i).cal);
+            bt(limit, n + 1, i + 1, calTest + cal.get(i).cal, maxSum + cal.get(i).tasty);
         }
     }
 }
