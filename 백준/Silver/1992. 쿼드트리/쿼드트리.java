@@ -1,4 +1,3 @@
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -26,7 +25,7 @@ public class Main {
 		int checkNum = check(r, c, size);
 
 		if (checkNum != -1) {
-			sb.append(checkNum + "");
+			sb.append(checkNum);
 			return;
 		}
 
