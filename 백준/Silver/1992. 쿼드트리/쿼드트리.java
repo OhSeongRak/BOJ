@@ -1,60 +1,71 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Arrays;
+import java.io.*;
+import java.math.BigInteger;
+import java.util.*;
+/*
+iv에 먼저 전역으로 생성해두고 입력받은 후 iv에 입력하면 모든함수에서 사용가능.
+main, func 에서도 쓰일 때, "함수의 인자로 넘겨주기 싫을 때"
+ */
 
 public class Main {
-	static int N;
-	static int[][] board;
-	static StringBuilder sb;
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+    static int N;
+    static int[][] arr2;
+    static StringBuilder sb = new StringBuilder();
 
-	private static int check(int r, int c, int size) {
-		int k = board[r][c];
+    public static void main(String[] args) throws IOException {
+        StringTokenizer st;
+        //StringTokenizer st = new StringTokenizer(br.readLine());
+        int N = Integer.parseInt(br.readLine()); // 정수로 입력받을 때
+        //N = Integer.parseInt(st.nextToken());
+        arr2 = new int[N][N];
 
-		for (int i = r, rEnd = r + size; i < rEnd; i++) {
-			for (int j = c, cEnd = c + size; j < cEnd; j++) {
-				if (k != board[i][j])
-					return -1;
-			}
-		}
+        for(int i =0; i<N; i++){
+            String str = br.readLine();
+            for(int j = 0; j<N; j++){
+                arr2[i][j] = str.charAt(j) - '0';
+            }
+        }
 
-		return k;
-	}
+        recur(N, 0, 0);
+        System.out.println(sb);
+    }
 
-	public static void cut(int r, int c, int size) {
-		int checkNum = check(r, c, size);
+    public static void recur(int size, int low, int col){ // 뒤부터 보냄.
+        int oneCount = 0;
+        int zeroCount = 0;
+        for(int i = low; i < low + size; i++){
+            for(int j = col; j < col + size; j++){
+                if(arr2[i][j] == 0){
+                    zeroCount++;
+                }else
+                    oneCount++;
+            }
+        }
 
-		if (checkNum != -1) {
-			sb.append(checkNum);
-			return;
-		}
+        if(zeroCount == size * size || oneCount == size * size){
+            if(zeroCount == size * size) {
+                sb.append("0");
+                return;
+            }else{
+                sb.append("1");
+                return;
+            }
+        }
 
-		sb.append("(");
-		int half = size / 2;
-		cut(r, c, half);
-		cut(r, c + half, half);
-		cut(r + half, c, half);
-		cut(r + half, c + half, half);
+        //검사하고.
+        sb.append("(");
 
-		sb.append(")");
-	}
 
-	public static void main(String[] args) throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in)); // br.readLine();
-		N = Integer.parseInt(br.readLine());
-		board = new int[N][N];
-		sb = new StringBuilder();
+        size /=2;
+        for(int low1 = low; low1 < low + size * 2; low1 += size){
+            for(int col1 = col; col1 < col + size * 2; col1 += size){
+                recur(size, low1, col1);
 
-		for (int i = 0; i < N; i++) {
-			String str = br.readLine();
-			for (int j = 0; j < str.length(); j++) {
-				board[i][j] = str.charAt(j) - '0';
-			}
-		}
+            }
+        }
 
-		cut(0, 0, N);
-		System.out.println(sb.toString());
+        sb.append(")");
 
-	} // end of main
-
+    }
 }
