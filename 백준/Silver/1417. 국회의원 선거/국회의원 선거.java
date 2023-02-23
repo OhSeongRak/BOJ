@@ -1,27 +1,27 @@
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Collections;
 import java.util.PriorityQueue;
-import java.util.Scanner;
 
 public class Main {
 	public static void main(String[] args) throws IOException {
-//		BufferedReader br = new BufferedReader(new InputStreamReader(System.in)); // br.readLine();
-//		StringTokenizer st = new StringTokenizer(br.readLine());
-//		StringBuilder sb = new StringBuilder(); // sb.append();
-//		st = new StringTokenizer(br.readLine()); // Integer.parseInt(st.nextToken());
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-		Scanner sc = new Scanner(System.in);
-		int N = sc.nextInt();
-		int myVote = sc.nextInt();
+		int N = Integer.parseInt(br.readLine());
+		int myVote = Integer.parseInt(br.readLine());
+		
 		if (N == 1) {
 			System.out.println(0);
 			return;
 		}
-
+		
+		// 우선순위 큐에서 나보다 득표가 많은 사람의 득표수 -1 한 뒤 다시 우선순위 큐에 넣음
+		// 내 득표수가 최대가 된다면 return
 		PriorityQueue<Integer> voteQueue = new PriorityQueue<>(Collections.reverseOrder());
 		for (int i = 0; i < N - 1; i++)
-			voteQueue.add(sc.nextInt());
+			voteQueue.add(Integer.parseInt(br.readLine()));
 
 		int cnt = 0;
 		while (true) {
