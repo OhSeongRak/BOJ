@@ -1,55 +1,53 @@
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.StringTokenizer;
+import java.util.*;
+import java.io.*;
 
 public class Main {
-	static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-	static StringTokenizer st;
-	static Set<Character> visited;
-	static int R, C, answer;
-	static char[][] board;
-	static int[] dr = { -1, 0, 1, 0 }; // 상 우 하 좌
-	static int[] dc = { 0, 1, 0, -1 };
 
-	public static void main(String[] args) throws IOException {
-		input();
-		visited = new HashSet<Character>();
-		visited.add(board[0][0]);
-		dfs(1, 0, 0);
-		System.out.println(answer);
+	static int[][] arr;
+	static boolean[] v;
+	static int maxDistance = 1;
+	
+	static int[] xRange = { 1, 0, -1, 0 };
+	static int[] yRange = { 0, 1, 0, -1 };
+	
+	public static void main(String[] args) throws Exception {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st;
 
-	}
+		st = new StringTokenizer(br.readLine());
+		int row = Integer.parseInt(st.nextToken());
+		int col = Integer.parseInt(st.nextToken());
 
-	private static void dfs(int cnt, int r, int c) {
-		if (cnt > answer)
-			answer = cnt;
+		arr = new int[row][col];
+		v = new boolean[30];
 
-		for (int i = 0; i < 4; i++) {
-			int nr = r + dr[i];
-			int nc = c + dc[i];
-
-			if (0 <= nr && nr < R && 0 <= nc && nc < C && !visited.contains(board[nr][nc])) {
-				visited.add(board[nr][nc]);
-				dfs(cnt + 1, nr, nc);
-				visited.remove(board[nr][nc]);
+		for (int i = 0; i < row; i++) {
+			String str = br.readLine();
+			for (int j = 0; j < col; j++) {
+				arr[i][j] = str.charAt(j) - 'A';
 			}
 		}
+		
+		v[arr[0][0]] = true;
+		dfs(0, 0, 1);
+		System.out.println(maxDistance);
+	}
 
-	} // end of dfs
+	// 최대로 이동
+	public static void dfs(int x, int y, int moveDistance) {
+		maxDistance = Math.max(moveDistance, maxDistance);
+		for (int i = 0; i < 4; i++) {
+			int nx = x + xRange[i];
+			int ny = y + yRange[i];
 
-	private static void input() throws IOException {
-		st = new StringTokenizer(br.readLine(), " ");
-		R = Integer.parseInt(st.nextToken());
-		C = Integer.parseInt(st.nextToken());
-		board = new char[R][C];
-		for (int i = 0; i < R; i++) {
-			String tmp = br.readLine();
-			for (int j = 0; j < C; j++)
-				board[i][j] = tmp.charAt(j);
+			if (nx >= 0 && ny >= 0 && nx < arr.length && ny < arr[0].length) {
+				if (!v[arr[nx][ny]]) {
+					v[arr[nx][ny]] = true;
+					dfs(nx, ny, moveDistance + 1);
+					v[arr[nx][ny]] = false;
+				}
+			}
 		}
-	} // end of input
-} // end of class
+	}
+}
