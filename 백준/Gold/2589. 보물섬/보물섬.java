@@ -1,88 +1,66 @@
-
-import java.util.*;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayDeque;
+import java.util.Queue;
+import java.util.StringTokenizer;
 
 public class Main {
+	static BufferedReader br;
+	static StringTokenizer st;
+	static int R, C, answer;
+	static char[][] board;
+	static boolean[][] visited;
+	static int[] dr = { -1, 0, 1, 0 };
+	static int[] dc = { 0, 1, 0, -1 };
 
-	static int[][] arr;
-	static int[][] arrCopy;
-	static int max;
-	static Node maxNode;
-
-	static int[] xdir = { 1, -1, 0, 0 };
-	static int[] ydir = { 0, 0, 1, -1 };
-
-	public static void main(String[] args) throws Exception {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		StringTokenizer st = new StringTokenizer(br.readLine());
-
-		int row = Integer.parseInt(st.nextToken());
-		int col = Integer.parseInt(st.nextToken());
-
-		arr = new int[row][col];
-		arrCopy = new int[row][col];
-
-		for (int i = 0; i < row; i++) {
-			String str = br.readLine();
-			for (int j = 0; j < col; j++) {
-				if (str.charAt(j) == 'W')
-					arr[i][j] = 0; // 바다
-				else
-					arr[i][j] = 1; // 육지
-			}
-		}
-
-		for (int i = 0; i < row; i++)
-			System.arraycopy(arr[i], 0, arrCopy[i], 0, col);
-		//System.out.println(Arrays.deepToString(arrCopy));
-
-		for (int i = 0; i < row; i++) {
-			for (int j = 0; j < col; j++) {
-				if (arr[i][j] == 1) {
+	public static void main(String[] args) throws IOException {
+		input();
+		for (int i = 0; i < R; i++) {
+			for (int j = 0; j < C; j++) {
+				if (board[i][j] == 'L') {
+					visited = new boolean[R][C];
 					bfs(i, j);
-					for (int k = 0; k < row; k++)
-						System.arraycopy(arrCopy[k], 0, arr[k], 0, col);
 				}
 			}
 		}
-		System.out.println(max);
-	}
+		System.out.println(answer);
+	} // end of main
 
-	public static void bfs(int x, int y) {
-		Queue<Node> q = new LinkedList<>();
-		q.offer(new Node(x, y, 0));
-		arr[x][y] = 0;
+	private static void bfs(int x, int y) {
+		Queue<int[]> queue = new ArrayDeque<int[]>();
+		queue.add(new int[] { x, y, 0 });
+		visited[x][y] = true;
 
-		while (!q.isEmpty()) {
-			Node n = q.poll();
-			
-			max = Math.max(max, n.dis);
+		while (!queue.isEmpty()) {
+			int[] pos = queue.poll();
+			int r = pos[0];
+			int c = pos[1];
+			int d = pos[2];
+			answer = Math.max(d, answer);
 
 			for (int i = 0; i < 4; i++) {
-				int nx = n.x + xdir[i];
-				int ny = n.y + ydir[i];
-
-				if (nx >= 0 && ny >= 0 && nx < arr.length && ny < arr[0].length) {
-					if (arr[nx][ny] == 1) {
-						q.offer(new Node(nx, ny, n.dis + 1));
-						arr[nx][ny] = 0;
-					}
+				int nr = r + dr[i];
+				int nc = c + dc[i];
+				if (0 <= nr && nr < R && 0 <= nc && nc < C && !visited[nr][nc]) {
+					if (board[nr][nc] == 'W')
+						continue;
+					visited[nr][nc] = true;
+					queue.add(new int[] { nr, nc, d + 1 });
 				}
 			}
-		}
-	}
+		} // end of while
+	} // end of bfs
 
-	static class Node {
-		int x, y, dis;
-
-		public Node(int x, int y, int dis) {
-			this.x = x;
-			this.y = y;
-			this.dis = dis;
-		}
-
-		public String toString() {
-			return x + " " + y;
-		}
-	}
-}
+	private static void input() throws IOException {
+		br = new BufferedReader(new InputStreamReader(System.in));
+		st = new StringTokenizer(br.readLine(), " ");
+		R = Integer.parseInt(st.nextToken());
+		C = Integer.parseInt(st.nextToken());
+		answer = 0;
+		visited = new boolean[R][C];
+		board = new char[R][];
+		for (int i = 0; i < R; i++)
+			board[i] = br.readLine().toCharArray();
+	} // end of input
+} // end of class
