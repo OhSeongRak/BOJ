@@ -1,71 +1,55 @@
-import java.io.*;
-import java.math.BigInteger; // subtract , multiply, add, mod
-import java.util.*;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.StringTokenizer;
 
 public class Main {
-    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-    static StringTokenizer st;
-    static StringBuilder sb = new StringBuilder();
+	static BufferedReader br;
+	static StringTokenizer st;
+	static StringBuilder sb;
+	static int L, C;
+	static char[] alpha;
+	static char[] password;
+	static String vowels = "aeiou";
 
-    static String[] temp;
-    static String[] arr;
-    static int len;
-    static int strs;
-    static List<String> list = new ArrayList<>();
+	public static void main(String[] args) throws IOException {
+		input();
+		combination(0, 0, 0, 0);
+	} // end of main
 
-    public static void main(String[] args) throws IOException {
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        len = Integer.parseInt(st.nextToken());
-        strs = Integer.parseInt(st.nextToken());
+	private static void combination(int cnt, int idx, int vowelCnt, int consCnt) {
+		if (cnt == L) {
+			if (vowelCnt >= 1 && consCnt >= 2) {
+				sb = new StringBuilder();
+				for (int i = 0; i < password.length; i++)
+					sb.append(password[i]);
+				System.out.println(sb.toString());
+			}
+			return;
+		}
 
-        st = new StringTokenizer(br.readLine(), " ");
+		for (int i = idx; i < C; i++) {
+			password[cnt] = alpha[i];
+			if (vowels.contains(alpha[i] + ""))
+				combination(cnt + 1, i + 1, vowelCnt + 1, consCnt);
+			else
+				combination(cnt + 1, i + 1, vowelCnt, consCnt + 1);
+		}
+	}
 
-        arr = new String[strs];
-        temp = new String[len];
-
-        int idx = 0;
-        while (st.hasMoreTokens())
-            arr[idx++] = st.nextToken();
-
-
-        bt(len, 0, 0);
-        list.sort((o1, o2) -> o1.compareTo(o2));
-
-        for(String s : list){
-            sb.append(s).append("\n");
-        }
-        System.out.println(sb);
-    }
-
-    // a e i o u // 1개 ~ 3개
-    // 조합
-    public static void bt(int limit , int n , int idx){
-        if(limit == n){
-            String[] st1 = new String[len];
-            int counts = 0;
-            int st1idx = 0;
-            for(String e : temp){
-                st1[st1idx++] = e;
-                if(e.equals("a") || e.equals("e") || e.equals("i") || e.equals("o") || e.equals("u"))
-                    counts++;
-            }
-            if(counts >= 1 && counts <= len - 2){
-                Arrays.sort(st1);
-                StringBuilder sb = new StringBuilder();
-                for(String s : st1)
-                    sb.append(s);
-                list.add(sb.toString());
-            }
-
-            return;
-        }
-
-        for(int i = idx; i<strs ; i++){
-            temp[n] = arr[i];
-            bt(limit, n+1, i + 1);
-        }
-
-
-    }
-}
+	private static void input() throws IOException {
+		br = new BufferedReader(new InputStreamReader(System.in));
+		st = new StringTokenizer(br.readLine(), " ");
+		L = Integer.parseInt(st.nextToken());
+		C = Integer.parseInt(st.nextToken());
+		alpha = new char[C];
+		password = new char[L];
+		st = new StringTokenizer(br.readLine(), " ");
+		for (int i = 0; i < alpha.length; i++) {
+			alpha[i] = st.nextToken().charAt(0);
+		}
+		Arrays.sort(alpha);
+	} // end of input
+} // end of class
