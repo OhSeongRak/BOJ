@@ -9,7 +9,7 @@ public class Main {
 	static BufferedReader br;
 	static StringTokenizer st;
 	static int N, K, A, B; // 화분 개수, 초기 수분, A개의 화분에 B만큼 물을 준다
-	static ArrayList<Integer> flower = new ArrayList<Integer>();;
+	static ArrayList<Integer> flower = new ArrayList<Integer>(); // 각각의 화분의 수분량을 담을 리스트
 
 	public static void main(String[] args) throws IOException {
 		input();
@@ -18,13 +18,13 @@ public class Main {
 
 	private static void sol() {
 		int cnt = 0;
-		while (!flower.contains(0)) {
+		while (!flower.contains(0)) { // 0이 생길때까지 반복
 			Collections.sort(flower);
 			for (int i = 0; i < A; i++)
-				flower.set(i, flower.get(i) + B);
+				flower.set(i, flower.get(i) + B); // 수분이 적은 친구들부터 B만큼 늘림
 
 			for (int i = 0; i < N; i++)
-				flower.set(i, flower.get(i) - 1);
+				flower.set(i, flower.get(i) - 1); // 전체적으로 1 줄임
 			cnt++;
 		}
 		System.out.println(cnt);
