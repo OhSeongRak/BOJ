@@ -2,7 +2,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -34,9 +33,6 @@ public class Main {
 		}
 
 		Collections.sort(bong, (o1, o2) -> o1[0] - o2[0]); // 왼쪽 x순으로 정렬
-//		for (int i = 0; i < bong.size(); i++) {
-//			System.out.println(Arrays.toString(bong.get(i)));
-//		}
 
 		countOutside();
 		countInside();
@@ -45,7 +41,7 @@ public class Main {
 	}
 
 	private static void countInside() {
-		inCnt = 1;
+		inCnt = 1; // 마지막 봉우리는 결국 in봉우리이기 때문에 1부터 시작
 		int curX = bong.get(0)[1]; // 가장 안쪽 봉우리의 오른쪽 x값
 
 		for (int i = 1; i < bong.size(); i++) {
@@ -56,7 +52,7 @@ public class Main {
 	}
 
 	private static void countOutside() {
-		outCnt = 1;
+		outCnt = 1; // 시작 봉우리는 결국 out봉우리이기 때문에 1부터 시지ㅏㄱ
 		int curX = bong.get(0)[1]; // 바깥 봉우리의 오른쪽 x값
 
 		for (int i = 1; i < bong.size(); i++) {
@@ -81,9 +77,5 @@ public class Main {
 			pos.remove(pos.get(0));
 		}
 		pos.add(pos.get(0)); // 시작 위치로 돌아오기 때문에 시작 위치 맨 뒤에 삽입
-
-//		for (int i = 0; i < pos.size(); i++) {
-//			System.out.println(Arrays.toString(pos.get(i)));
-//		}
 	} // end of input
 }
