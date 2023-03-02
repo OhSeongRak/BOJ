@@ -55,7 +55,7 @@ public class Main {
 				continue;
 
 			for (Node node : graph[curNode.no]) {
-				int total = curNode.weight + node.weight;
+				int total = distance[curNode.no] + node.weight;
 				if (total < distance[node.no]) {
 					distance[node.no] = total;
 					pq.add(new Node(node.no, total));
