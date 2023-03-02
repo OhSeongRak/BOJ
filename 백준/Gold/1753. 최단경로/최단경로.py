@@ -1,44 +1,43 @@
-# https://www.acmicpc.net/problem/1753
-from collections import defaultdict
 import heapq
 import sys
+
 input = sys.stdin.readline
 
+inf = int(1e9)
 
-def djikstra(start):
-    distances[start] = 0
-    queue = []
-    heapq.heappush(queue, (0, start))
+V, e = map(int, input().split())
+k = int(input())
 
-    while queue:
-        cur_dis, cur_v = heapq.heappop(queue)
+graph = [[] for _ in range(V + 1)]
+distance = [inf] * (V + 1)
 
-        # queue에서 나온 현재 거리가
-        # 최단 거리(distances 리스트에 있는)보다 클 경우
-        if distances[cur_v] < cur_dis:
+for i in range(e):
+    u, v, w = map(int, input().split())
+    graph[u].append((v, w))
+
+def dijkstra(k):
+    q = []
+    heapq.heappush(q, (0, k))  # 목적, 가중
+    distance[k] = 0
+
+    while q:
+        w, now = heapq.heappop(q)  # 가중, 목적
+        if distance[now] < w:  # 큐에서 꺼낸게 더커 그럼 무시.
             continue
 
-        for v, dis in graph[cur_v]:
-            total_dis = cur_dis + dis
-            if total_dis < distances[v]:
-                distances[v] = total_dis
-                heapq.heappush(queue, (total_dis, v))
-
-    for i in range(1, V+1):
-        if distances[i] == INF:
-            print("INF")
-        else:
-            print(distances[i])
-
-    return
+        for d_dest, d_w in graph[now]:  # 목적지
+            # i는
+            # 0번이 목적지
+            # 1번이 가중치
+            if distance[now] + d_w < distance[d_dest]:
+                distance[d_dest] = distance[now] + d_w
+                heapq.heappush(q, ( distance[d_dest], d_dest  ))
 
 
-INF = 1e8
-V, E = map(int, input().split())
-start = int(input())
-graph = defaultdict(list)
-for _ in range(E):
-    v1, v2, w = map(int, input().split())
-    graph[v1].append((v2, w))
-distances = [INF] * (V+1)
-djikstra(start)
+dijkstra(k)
+
+for i in range(1, V + 1):
+    if distance[i] != inf:
+        print(distance[i])
+    else:
+        print("INF")
